@@ -1,0 +1,176 @@
+/* COSMIC BACKGROUND */
+body {
+
+    background:
+    linear-gradient(
+        135deg,
+        #e0f7ff,
+        #eef6ff,
+        #f8fbff
+    );
+
+    min-height: 100vh;
+
+    font-family: 'Segoe UI', sans-serif;
+
+    color: #1e293b;
+}
+
+/* NAVBAR */
+
+.navbar {
+
+    background:
+    linear-gradient(
+        90deg,
+        #4facfe,
+        #00f2fe
+    ) !important;
+
+    box-shadow:
+    0 4px 15px rgba(0,0,0,0.1);
+}
+
+
+/* CARDS */
+
+.card {
+
+    background: white !important;
+
+    border: none;
+
+    border-radius: 20px;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,0.08);
+
+    transition: 0.3s ease;
+}
+
+.card:hover {
+
+    transform: translateY(-5px);
+}
+
+
+/* HEADINGS */
+
+h1, h2, h3, h4, h5 {
+
+    color: #00e5ff;
+}
+
+
+/* TABLE */
+
+.table {
+
+    color: white;
+}
+
+.table-dark {
+
+    background:
+    rgba(0,255,255,0.2);
+}
+
+
+/* BUTTONS */
+.btn-primary {
+
+    background:
+    linear-gradient(
+        45deg,
+        #4facfe,
+        #00f2fe
+    );
+
+    border: none;
+}
+
+.btn-success {
+
+    background:
+    linear-gradient(
+        45deg,
+        #43e97b,
+        #38f9d7
+    );
+
+    border: none;
+}
+
+.btn-danger {
+
+    background:
+    linear-gradient(
+        45deg,
+        #fa709a,
+        #fee140
+    );
+
+    border: none;
+}
+
+
+/* PROFILE CARD */
+
+.profile-card {
+
+    text-align: center;
+}
+
+
+/* GLOW EFFECT */
+.glow {
+
+    color: #2563eb;
+
+    font-weight: bold;
+}
+.navbar {
+
+    background:
+    linear-gradient(
+        90deg,
+        #020617,
+        #0f172a,
+        #1e293b
+    ) !important;
+
+    border-bottom:
+    1px solid rgba(0,229,255,0.3);
+
+    box-shadow:
+    0 0 15px rgba(0,229,255,0.2);
+}
+.card {
+
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow:
+    0 0 25px rgba(0,229,255,0.3);
+}
+.glow {
+
+    color: #2563eb;
+
+    font-weight: 700;
+
+    text-shadow: none;
+}
+.table {
+
+    color: #1e293b;
+}
+.table-hover tbody tr:hover {
+
+    background:
+    rgba(0,229,255,0.1);
+}
