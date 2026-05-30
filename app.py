@@ -349,6 +349,15 @@ def download_invoice():
         download_name="invoice.pdf",
         mimetype='application/pdf'
     )
+@app.route('/users')
+def users():
+
+    all_users = User.query.all()
+
+    return render_template(
+        'users.html',
+        users=all_users
+    )
 with app.app_context():
     db.create_all()
 # MAIN FUNCTION
