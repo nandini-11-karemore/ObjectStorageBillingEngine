@@ -349,6 +349,8 @@ def download_invoice():
         download_name="invoice.pdf",
         mimetype='application/pdf'
     )
+with app.app_context():
+    db.create_all()
 # MAIN FUNCTION
 if __name__ == '__main__':
 
