@@ -16,8 +16,9 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # DATABASE CONFIGURATION
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///storage.db'app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///storage.db'
 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # INITIALIZE DATABASE
 db = SQLAlchemy(app)
 
