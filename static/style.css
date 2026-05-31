@@ -174,3 +174,38 @@ h1, h2, h3, h4, h5 {
     background:
     rgba(0,229,255,0.1);
 }
+/* ADMIN DASHBOARD */
+
+.admin-card{
+    border-radius:20px;
+    transition:0.3s;
+    background:rgba(255,255,255,0.9);
+}
+
+.admin-card:hover{
+    transform:translateY(-5px);
+}
+
+.admin-card h1{
+    font-size:2.5rem;
+    font-weight:700;
+}
+
+.admin-card h3{
+    color:#5b6bff;
+}
+
+/* TABLE */
+
+.table{
+    border-radius:15px;
+    overflow:hidden;
+}
+
+.table-dark{
+    background:linear-gradient(
+        135deg,
+        #5b6bff,
+        #8a7dff
+    );
+}

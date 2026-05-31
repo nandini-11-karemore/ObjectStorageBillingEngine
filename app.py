@@ -164,8 +164,35 @@ def dashboard():
         bill=round(bill, 2),
         files=files
     )
+@app.route('/admin')
+def admin():
 
+    total_users = User.query.count()
 
+    total_files = StorageObject.query.count()
+
+    files = StorageObject.query.all()
+
+    total_storage = 0
+
+    for file in files:
+        total_storage += file.file_size
+
+    # DEMO REVENUE CALCULATION
+    total_revenue = round(total_storage * 0.02, 2)
+
+    recent_users = User.query.order_by(
+        User.id.desc()
+    ).limit(5).all()
+
+    return render_template(
+        'admin.html',
+        total_users=total_users,
+        total_files=total_files,
+        total_storage=round(total_storage, 2),
+        total_revenue=total_revenue,
+        recent_users=recent_users
+    )
 # FILE UPLOAD
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -337,7 +364,7 @@ def download_invoice():
     p.drawString(
         100, 640,
         f"Generated On: {datetime.now().strftime('%d-%m-%Y %H:%M')}"
-    )
+    ) 
 
     p.save()
 
@@ -345,7 +372,7 @@ def download_invoice():
 
     return send_file(
         buffer,
-        as_attachment=True,
+        as_attachment=True, 
         download_name="invoice.pdf",
         mimetype='application/pdf'
     )
