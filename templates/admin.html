@@ -11,6 +11,7 @@
    <link rel="stylesheet"
     href="{{ url_for('static', filename='style.css') }}">
 </head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <body>
 
@@ -141,12 +142,104 @@
                 </tbody>
 
             </table>
+<hr class="mt-5">
 
+<h2 class="mb-4">
+    Recent Uploaded Files
+</h2>
+
+<div class="card shadow-lg border-0">
+
+    <div class="card-body">
+
+        <table class="table table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>File Name</th>
+
+                    <th>Size (MB)</th>
+
+                    <th>Upload Time</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for file in recent_files %}
+
+                <tr>
+
+                    <td>{{ file.file_name }}</td>
+
+                    <td>{{ file.file_size | round(2) }}</td>
+
+                    <td>{{ file.upload_time }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
         </div>
 
     </div>
 
 </div>
+<hr class="mt-5">
+
+<h2 class="mb-4">
+    Storage Analytics
+</h2>
+
+<div class="card shadow-lg border-0">
+
+    <div class="card-body">
+
+        <canvas id="storageChart" data-users="{{ total_users }}" data-files="{{ total_files }}" data-storage="{{ total_storage }}"></canvas>
+
+    </div>
+
+</div>
+
+
+<!-- CHART JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx = document.getElementById('storageChart');
+const users = Number(ctx.dataset.users) || 0;
+const files = Number(ctx.dataset.files) || 0;
+const storage = Number(ctx.dataset.storage) || 0;
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [
+            'Users',
+            'Files',
+            'Storage (MB)'
+        ],
+        datasets: [{
+            label: 'System Analytics',
+            data: [users, files, storage]
+        }]
+    }
+});
+
+</script>
 
 </body>
 </html>

@@ -4,7 +4,9 @@ import os
 from datetime import datetime
 from reportlab.pdfgen import canvas
 from flask import send_file
+from supabase_client import supabase
 import io
+import uuid
 # CREATE FLASK APP
 app = Flask(__name__)
 
@@ -53,6 +55,8 @@ class StorageObject(db.Model):
         db.Float,
         nullable=False
     )
+    
+    file_url = db.Column(db.String(500))
 
     upload_time = db.Column(
         db.DateTime,
@@ -60,6 +64,27 @@ class StorageObject(db.Model):
     )
 
 
+class LoginHistory(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    user_name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    login_time = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
 # HOME PAGE
 @app.route('/')
 def home():
@@ -105,6 +130,13 @@ def login():
 
             session['user_id'] = user.id
             session['user_name'] = user.name
+            new_login = LoginHistory(
+                user_id=user.id,
+                user_name=user.name
+            )
+
+            db.session.add(new_login)
+            db.session.commit()
 
             return redirect('/dashboard')
 
@@ -185,14 +217,24 @@ def admin():
         User.id.desc()
     ).limit(5).all()
 
+    recent_files = StorageObject.query.order_by(
+        StorageObject.id.desc()
+    ).limit(5).all()
+    recent_files = StorageObject.query.order_by(
+    StorageObject.upload_time.desc()
+).limit(10).all()
+
     return render_template(
         'admin.html',
         total_users=total_users,
         total_files=total_files,
         total_storage=round(total_storage, 2),
         total_revenue=total_revenue,
-        recent_users=recent_users
+        recent_users=recent_users,
+        recent_files=recent_files
     )
+#from supabase_client import supabase
+
 # FILE UPLOAD
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -204,26 +246,40 @@ def upload():
 
     if request.method == 'POST':
 
-        file = request.files['file']
+        file = request.files.get('file')
 
-        if file:
+        if not file or file.filename == "":
+            return "No file selected"
 
-            filepath = os.path.join(
-                app.config['UPLOAD_FOLDER'],
-                file.filename
+        try:
+            # Read file into memory
+            file_bytes = file.read()
+
+            # Calculate file size (MB)
+            size = len(file_bytes) / (1024 * 1024)
+
+            # Generate unique filename
+            unique_filename = f"{uuid.uuid4()}_{file.filename}"
+
+            # Upload to Supabase Storage
+            supabase.storage.from_("uploads").upload(
+                path=unique_filename,
+                file=file_bytes,
+                file_options={
+                    "content-type": file.content_type,
+                    "upsert": "false"
+                }
             )
 
-            # SAVE FILE
-            file.save(filepath)
+            # Get public URL
+            file_url = supabase.storage.from_("uploads").get_public_url(unique_filename)
 
-            # FILE SIZE
-            size = os.path.getsize(filepath) / (1024 * 1024)
-
-            # SAVE TO DATABASE
+            # Save metadata in database
             new_file = StorageObject(
                 user_id=user_id,
-                file_name=file.filename,
-                file_size=size
+                file_name=unique_filename,
+                file_size=size,
+                file_url=file_url
             )
 
             db.session.add(new_file)
@@ -231,10 +287,14 @@ def upload():
 
             return redirect('/dashboard')
 
+        except Exception as e:
+            return f"Upload Error: {str(e)}"
+
     return render_template('upload.html')
 
+    
 
-# DELETE FILE
+#DELETE FILE
 @app.route('/delete/<int:file_id>')
 def delete_file(file_id):
 
@@ -250,16 +310,13 @@ def delete_file(file_id):
 
     if file:
 
-        filepath = os.path.join(
-            app.config['UPLOAD_FOLDER'],
-            file.file_name
-        )
+        # Delete from Supabase Storage
+        try:
+            supabase.storage.from_("uploads").remove([file.file_name])
+        except Exception as e:
+            print("Supabase Delete Error:", e)
 
-        # DELETE FILE
-        if os.path.exists(filepath):
-            os.remove(filepath)
-
-        # DELETE DATABASE RECORD
+        # Delete from database
         db.session.delete(file)
         db.session.commit()
 
@@ -385,7 +442,17 @@ def users():
         'users.html',
         users=all_users
     )
+@app.route('/login-history')
+def login_history():
 
+    records = LoginHistory.query.order_by(
+        LoginHistory.login_time.desc()
+    ).all()
+
+    return render_template(
+        'login_history.html',
+        records=records
+    )
 with app.app_context():
     db.create_all()
 # MAIN FUNCTION
@@ -396,4 +463,3 @@ if __name__ == '__main__':
 
     app.run(debug=False)
 
-    
